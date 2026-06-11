@@ -1,8 +1,8 @@
 # im_cacher 🚀
 
 
-[![Go Version](https://shields.io)](https://golang.org)
-[![License](https://shields.io)](LICENSE)
+[![Go Version](img.shields.io/github/go-mod/go-version/sardor-innatov/im_cacher)](https://golang.org)
+[![License](img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 **im_cacher** is a lightweight, high-performance in-memory key-value database and caching system built from scratch using **Go**. It is designed as a compact, self-contained alternative to Redis, supporting real-time data persistence to disk.
 
