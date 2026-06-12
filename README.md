@@ -38,7 +38,7 @@
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com
+git clone https://github.com/sardor-innatov/im_cacher.git
 cd im_cacher
 ```
 
