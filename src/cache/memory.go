@@ -121,10 +121,14 @@ func (d *Dict) Iterator(rawValue *resp.Value) {
 
 	arrValue := rawValue.Array()
 
+	if len(arrValue) < 4{
+		return
+	}
+
 	switch arrValue[0].String() {
 	case "set":
 
-		ttl := time.Second * time.Duration(arrValue[1].Integer())
+		ttl := arrValue[1].Integer()
 
 		key := arrValue[2].String()
 

@@ -45,17 +45,28 @@ func (d *Dict) calculateBucketIndex(key string) uint32 {
 	return hashValue & d.sizeMask
 }
 
-func (d *Dict) Set(key string, value resp.Value, ttl time.Duration) {
+func (d *Dict) Set(key string, value resp.Value, ttl int) {
 	index := d.calculateBucketIndex(key)
 
 	var expiresAt int64 = 0
 	if ttl > 0 {
-		expiresAt = time.Now().Add(ttl).UnixNano()
+		expiresAt = time.Now().Add(time.Second * time.Duration(ttl)).UnixNano()
 	}
 
 	current := d.buckets[index]
 	for current != nil {
 		if current.Key == key {
+			// if u want to set value without restarting ttl -> TTL = -1
+			// for example : for rate limiting you need to increase counter of requests
+			// and the expire date must remain
+			// in such cases ttl must be -1
+			if ttl == -1 {
+				d.mu.Lock()
+				current.Value = value
+				current.LastAccessedAt = time.Now().UnixNano()
+				d.mu.Unlock()
+				return
+			}
 			d.mu.Lock()
 			current.Value = value
 			current.ExpiresAt = expiresAt

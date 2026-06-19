@@ -2,12 +2,11 @@ package protocol
 
 import (
 	"im_cacher/src/protocol/resp"
-	"time"
 )
 
 type Request struct {
 	Type  reqType
-	TTL   time.Duration
+	TTL   int
 	Key   string
 	Value resp.Value
 }
@@ -15,9 +14,10 @@ type Request struct {
 type reqType string
 
 const (
-	SET reqType = "set"
-	GET reqType = "get"
-	DEL reqType = "del"
+	SET  reqType = "set"
+	GET  reqType = "get"
+	DEL  reqType = "del"
+	PING reqType = "ping"
 )
 
 func SerializeRequest(value resp.Value) (*Request, *resp.Value, error) {
@@ -32,15 +32,20 @@ func SerializeRequest(value resp.Value) (*Request, *resp.Value, error) {
 		request.Type = GET
 	case "del":
 		request.Type = DEL
+	case "ping":
+		request.Type = PING
+		return &request, nil,nil
 	default:
 		return nil, nil, ErrInvalidFormat
 	}
 
 	ttl := arrValue[1].Integer()
-	if ttl <= 0 {
+	if ttl == 0 {
 		request.TTL = 0
 	} else if ttl > 0 {
-		request.TTL = time.Second * time.Duration(ttl)
+		request.TTL = ttl
+	} else if ttl == -1{
+		request.TTL = -1
 	}
 
 	request.Key = arrValue[2].String()
